@@ -9,6 +9,8 @@ import os
 import json
 from absl import app
 from absl import flags
+from selenium.webdriver.support.ui import WebDriverWait
+from selenium.webdriver.support import expected_conditions as EC
 
 """FLAGS are used to pass arguments to the script
     --URL: URL of the CFE website
@@ -77,7 +79,9 @@ def state_municipalities_scrape(state_number,url,month_select_name, year='2022',
                 #find the element that contains the table and convert it to a dataframe also 
                 #add the state, municipality and division to the dataframe and append it to the list
                 try:
-                    table = driver.find_element(By.CSS_SELECTOR,"table.table.table-bordered.table-striped")
+                    table = WebDriverWait(driver, 10).until(EC.presence_of_element_located((By.CSS_SELECTOR,"table.table.table-bordered.table-striped")))
+                    driver.refresh()
+                    #table = driver.find_element(By.CSS_SELECTOR,"table.table.table-bordered.table-striped")
                     table_html = table.get_attribute('outerHTML')
                     tabular_data = pd.read_html(table_html)[0]
                     tabular_data.columns = ['Tarifa','Descripción','Int. Horario','Cargo','Unidades','Valor']
@@ -139,7 +143,7 @@ def main(argv):
     #get the state indexes as list
     states_keys = list(states.keys())
     #cut the state name to get the first n elements
-    states_keys = states_keys[9:]
+    #states_keys = states_keys[16:]
     #iterate over the states and scrape the data for each one
     for state_key in states_keys:
         scraped_data = state_municipalities_scrape(state_key, FLAGS.URL, month_selector, FLAGS.YEAR, last_month)
