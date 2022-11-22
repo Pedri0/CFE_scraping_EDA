@@ -78,9 +78,9 @@ def state_municipalities_scrape(state_number,url,month_select_name, year='2022',
                 select_div.select_by_value(str(division_index))
                 #find the element that contains the table and convert it to a dataframe also 
                 #add the state, municipality and division to the dataframe and append it to the list
+                driver.refresh()
                 try:
                     table = WebDriverWait(driver, 10).until(EC.presence_of_element_located((By.CSS_SELECTOR,"table.table.table-bordered.table-striped")))
-                    driver.refresh()
                     #table = driver.find_element(By.CSS_SELECTOR,"table.table.table-bordered.table-striped")
                     table_html = table.get_attribute('outerHTML')
                     tabular_data = pd.read_html(table_html)[0]
